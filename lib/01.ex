@@ -1,16 +1,23 @@
 defmodule AdventOfCode.Day1 do
-  def solve(filename) do
+  def solve_p1(filename) do
     input = read_input(filename)
 
     left = input |> Enum.map(fn [a, _] -> a end) |> Enum.sort()
     right = input |> Enum.map(fn [_, b] -> b end) |> Enum.sort()
 
-    IO.inspect(left)
-    IO.inspect(right)
-
     # distance =
     Enum.zip(left, right)
     |> Enum.map(fn {a, b} -> abs(a - b) end)
+    |> Enum.sum()
+  end
+
+  def solve_p2(filename) do
+    input = read_input(filename)
+
+    freq = Enum.frequencies_by(input, fn [_, b] -> b end)
+
+    input
+    |> Enum.map(fn [a, _] -> a * Map.get(freq, a, 0) end)
     |> Enum.sum()
   end
 
