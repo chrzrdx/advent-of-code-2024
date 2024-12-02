@@ -11,12 +11,10 @@ defmodule AdventOfCode.Day2Test do
   end
 
   test "p2: basic" do
-    assert true == true
-    # assert Day2.solve_p2("test/02_tc_01.input") == 31
+    assert Day2.solve_p2("test/02_tc_01.input") == 4
   end
 
   test "p2: puzzle" do
-    assert true == true
-    # assert Day2.solve_p2("test/02_tc_puzzle.input") == 24_941_624
+    assert Day2.solve_p2("test/02_tc_puzzle.input") == 324
   end
 end

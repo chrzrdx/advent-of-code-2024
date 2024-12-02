@@ -1,23 +1,30 @@
 defmodule AdventOfCode.Day2 do
   def solve_p1(filename) do
-    levels =
-      read_input(filename)
-      |> Enum.count(fn level -> decreasing?(level) or increasing?(level) end)
+    reports = read_input(filename)
+
+    Enum.count(reports, fn report ->
+      safe?(report, true) or safe?(Enum.reverse(report), true)
+    end)
   end
 
   def solve_p2(filename) do
-    levels = read_input(filename)
+    reports = read_input(filename)
+
+    Enum.count(reports, fn report ->
+      safe?(report, false) or safe?(Enum.reverse(report), false)
+    end)
   end
 
-  defp increasing?([]), do: true
-  defp increasing?([a, b]), do: 1 <= b - a and b - a <= 3
-  defp increasing?([a, b | rest]) when 1 <= b - a and b - a <= 3, do: increasing?([b | rest])
-  defp increasing?(_), do: false
+  defp safe?([a, b], _), do: 1 <= b - a and b - a <= 3
 
-  defp decreasing?([]), do: true
-  defp decreasing?([a, b]), do: 1 <= a - b and a - b <= 3
-  defp decreasing?([a, b | rest]) when 1 <= a - b and a - b <= 3, do: decreasing?([b | rest])
-  defp decreasing?(_), do: false
+  defp safe?([a, b, c | rest], damped)
+       when 1 <= b - a and b - a <= 3 and 1 <= c - b and c - b <= 3,
+       do: safe?([b, c | rest], damped)
+
+  defp safe?([a, b, c | rest], false),
+    do: safe?([b, c | rest], true) or safe?([a, c | rest], true) or safe?([a, b | rest], true)
+
+  defp safe?(_, _), do: false
 
   defp read_input(filename) do
     filename
