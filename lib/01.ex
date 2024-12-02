@@ -25,7 +25,9 @@ defmodule AdventOfCode.Day1 do
     |> Enum.map(fn line ->
       line
       |> String.split(" ", trim: true)
-      |> (fn [a, b] -> {String.to_integer(a), String.to_integer(b)} end).()
+      |> (fn [a, b] ->
+            {String.to_integer(a), String.to_integer(b)}
+          end).()
     end)
     |> Enum.unzip()
   end
