@@ -2,9 +2,7 @@ defmodule AdventOfCode.Day2 do
   def solve_p1(filename) do
     reports = read_input(filename)
 
-    Enum.count(reports, fn report ->
-      safe?(report)
-    end)
+    reports |> Enum.count(&safe?/1)
   end
 
   def solve_p2(filename) do
@@ -13,7 +11,7 @@ defmodule AdventOfCode.Day2 do
     Enum.count(reports, fn report ->
       safe?(report) or
         Enum.any?(0..(length(report) - 1), fn idx ->
-          safe?(List.delete_at(report, idx))
+          report |> List.delete_at(idx) |> safe?()
         end)
     end)
   end
