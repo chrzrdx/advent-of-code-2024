@@ -3,7 +3,7 @@ defmodule AdventOfCode.Day2 do
     reports = read_input(filename)
 
     Enum.count(reports, fn report ->
-      safe?(report, true) or safe?(Enum.reverse(report), true)
+      safe?(report)
     end)
   end
 
@@ -11,20 +11,18 @@ defmodule AdventOfCode.Day2 do
     reports = read_input(filename)
 
     Enum.count(reports, fn report ->
-      safe?(report, false) or safe?(Enum.reverse(report), false)
+      safe?(report) or
+        Enum.any?(0..(length(report) - 1), fn idx ->
+          safe?(List.delete_at(report, idx))
+        end)
     end)
   end
 
-  defp safe?([a, b], _), do: 1 <= b - a and b - a <= 3
+  defp safe?(x), do: increasing?(x) or increasing?(Enum.reverse(x))
 
-  defp safe?([a, b, c | rest], damped)
-       when 1 <= b - a and b - a <= 3 and 1 <= c - b and c - b <= 3,
-       do: safe?([b, c | rest], damped)
-
-  defp safe?([a, b, c | rest], false),
-    do: safe?([b, c | rest], true) or safe?([a, c | rest], true) or safe?([a, b | rest], true)
-
-  defp safe?(_, _), do: false
+  defp increasing?([_]), do: true
+  defp increasing?([a, b | rest]) when 1 <= b - a and b - a <= 3, do: increasing?([b | rest])
+  defp increasing?(_), do: false
 
   defp read_input(filename) do
     filename
