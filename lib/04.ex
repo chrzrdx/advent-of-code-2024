@@ -17,11 +17,25 @@ defmodule AdventOfCode.Day04 do
 
     Enum.sum(
       Enum.map(start_positions, fn pos ->
-        Enum.count(@directions, fn {_,dir} ->
+        Enum.count(@directions, fn {_, dir} ->
           word_in_direction?(word, pos, dir, pos_map)
         end)
       end)
     )
+  end
+
+  def solve_p2(filename) do
+    pos_map = read_input(filename)
+
+    Enum.count(Map.keys(pos_map), fn start_pos ->
+      cross?("MAS", start_pos, pos_map)
+    end)
+  end
+
+  defp get_start_pos(pos_map, start_char) do
+    pos_map
+    |> Enum.filter(fn {_, char} -> char == start_char end)
+    |> Enum.map(fn {k, _} -> k end)
   end
 
   defp word_in_direction?(word, {x, y}, {xoffset, yoffset}, pos_map) do
@@ -32,15 +46,20 @@ defmodule AdventOfCode.Day04 do
     end)
   end
 
-  def solve_p2(filename) do
-    read_input(filename)
-    1
-  end
+  defp cross?(word, {x, y}, pos_map) do
+    reversed = String.reverse(word)
 
-  defp get_start_pos(pos_map, start_char) do
-    pos_map
-    |> Enum.filter(fn {_, char} -> char == start_char end)
-    |> Enum.map(fn {k, _} -> k end)
+    cross_pairs = [
+      {word, word},
+      {word, reversed},
+      {reversed, word},
+      {reversed, reversed}
+    ]
+
+    Enum.any?(cross_pairs, fn {word1, word2} ->
+      word_in_direction?(word1, {x, y}, @directions.se, pos_map) and
+        word_in_direction?(word2, {x + String.length(word1) - 1, y}, @directions.sw, pos_map)
+    end)
   end
 
   defp read_input(filename) do
