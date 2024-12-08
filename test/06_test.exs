@@ -10,13 +10,11 @@ defmodule AdventOfCode.Day06Test do
     assert Day06.solve_p1("test/06_tc_puzzle.input") == 5080
   end
 
-  @tag :skip
   test "p2: basic" do
-    assert Day06.solve_p2("test/06_tc_02.input") == 1
+    assert Day06.solve_p2("test/06_tc_01.input") == 6
   end
 
-  @tag :skip
   test "p2: puzzle" do
-    assert Day06.solve_p2("test/06_tc_puzzle.input") == 1
+    assert Day06.solve_p2("test/06_tc_puzzle.input") == 1919
   end
 end
