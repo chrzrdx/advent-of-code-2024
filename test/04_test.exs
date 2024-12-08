@@ -11,7 +11,7 @@ defmodule AdventOfCode.Day04Test do
   end
 
   test "p2: basic" do
-    assert Day04.solve_p2("test/04_tc_02.input") == 9
+    assert Day04.solve_p2("test/04_tc_01.input") == 9
   end
 
   test "p2: puzzle" do
