@@ -26,10 +26,13 @@ defmodule AdventOfCode.Day04 do
 
   def solve_p2(filename) do
     pos_map = read_input(filename)
+    word = "MAS"
+    middle = String.length(word) |> Kernel.div(2)
+    middle_char = String.at(word, middle)
 
-    Enum.count(Map.keys(pos_map), fn start_pos ->
-      cross?("MAS", start_pos, pos_map)
-    end)
+    get_start_pos(pos_map, middle_char)
+    |> Enum.map(fn {x, y} -> {x - middle, y - middle} end)
+    |> Enum.count(fn start_pos -> cross?(word, start_pos, pos_map) end)
   end
 
   defp get_start_pos(pos_map, start_char) do
