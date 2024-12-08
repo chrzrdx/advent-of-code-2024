@@ -66,13 +66,12 @@ defmodule AdventOfCode.Day06 do
       |> File.read!()
       |> String.split("\n", trim: true)
       |> Enum.with_index()
-      |> Enum.map(fn {line, x} ->
+      |> Enum.flat_map(fn {line, x} ->
         line
         |> String.split("", trim: true)
         |> Enum.with_index()
         |> Enum.map(fn {char, y} -> {{x, y}, char} end)
       end)
-      |> List.flatten()
 
     {start_position, _} = Enum.find(positions, fn {_, char} -> char == "^" end)
 

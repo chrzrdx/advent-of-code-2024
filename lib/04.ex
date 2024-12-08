@@ -70,13 +70,12 @@ defmodule AdventOfCode.Day04 do
     |> File.read!()
     |> String.split("\n", trim: true)
     |> Enum.with_index()
-    |> Enum.map(fn {line, y} ->
+    |> Enum.flat_map(fn {line, y} ->
       line
       |> String.split("", trim: true)
       |> Enum.with_index()
       |> Enum.map(fn {char, x} -> {{x, y}, char} end)
     end)
-    |> List.flatten()
     |> Enum.into(%{})
   end
 end
