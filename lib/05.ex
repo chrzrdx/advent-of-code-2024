@@ -9,8 +9,13 @@ defmodule AdventOfCode.Day05 do
   end
 
   def solve_p2(filename) do
-    read_input(filename)
-    1
+    {ordering_rules, updates} = read_input(filename)
+
+    updates
+    |> Enum.filter(fn update -> not correct_order?(update, ordering_rules) end)
+    |> Enum.map(fn update -> fix_order(update, ordering_rules) end)
+    |> Enum.map(fn list -> Enum.at(list, Kernel.div(length(list), 2)) end)
+    |> Enum.sum()
   end
 
   def correct_order?([head | tail], ordering_rules) do
@@ -22,6 +27,19 @@ defmodule AdventOfCode.Day05 do
   defp correct_order?([head | tail], ordering_rules, current_order) do
     case ordering_rules[head] != nil and MapSet.subset?(current_order, ordering_rules[head]) do
       true -> correct_order?(tail, ordering_rules, MapSet.put(current_order, head))
+      false -> false
+    end
+  end
+
+  defp fix_order([head | tail], ordering_rules) do
+    fix_order(tail, ordering_rules, MapSet.new([head]))
+  end
+
+  defp fix_order([], _rules, _current), do: true
+
+  defp fix_order([head | tail], ordering_rules, current_order) do
+    case ordering_rules[head] != nil and MapSet.subset?(current_order, ordering_rules[head]) do
+      true -> fix_order(tail, ordering_rules, MapSet.put(current_order, head))
       false -> false
     end
   end
