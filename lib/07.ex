@@ -1,69 +1,28 @@
 defmodule AdventOfCode.Day07 do
   def solve_p1(filename) do
     read_input(filename)
-    |> Enum.filter(&solvable_p1?/1)
+    |> Enum.filter(fn {target, [first | rest]} -> solvable?(target, first, rest, false) end)
     |> Enum.map(fn {target, _} -> target end)
     |> Enum.sum()
   end
 
   def solve_p2(filename) do
     read_input(filename)
-    |> Enum.filter(&solvable_p2?/1)
-    |> IO.inspect()
+    |> Enum.filter(fn {target, [first | rest]} -> solvable?(target, first, rest, true) end)
     |> Enum.map(fn {target, _} -> target end)
     |> Enum.sum()
   end
 
-  def solvable_p1?({target, [first | rest]}) do
-    solvable_p1?(target, first, rest)
+  def solvable?(target, current, [] = _nums, _concat?), do: target == current
+  def solvable?(target, current, _, _) when current > target, do: false
+
+  def solvable?(target, current, [top | rest], concat?) do
+    solvable?(target, current * top, rest, concat?) or
+      solvable?(target, current + top, rest, concat?) or
+      if concat?, do: solvable?(target, concat(current, top), rest, concat?), else: false
   end
 
-  def solvable_p1?(target, current, []), do: target == current
-  def solvable_p1?(target, current, _nums) when current > target, do: false
-
-  def solvable_p1?(target, current, [top | rest]) do
-    solvable_p1?(target, current * top, rest) or
-      solvable_p1?(target, current + top, rest)
-  end
-
-  def solvable_p2?({target, [first | rest]}) do
-    solvable_p2?(target, first, rest, [{:+, first}])
-  end
-
-  def solvable_p2?(target, current, [], _ops), do: target == current
-
-  def solvable_p2?(target, current, [top | rest] = nums, ops) do
-    IO.inspect({target, current, nums, ops, nil})
-
-    solvable_p2?(target, current * top, rest, [{:*, top} | ops]) or
-      solvable_p2?(target, current + top, rest, [{:+, top} | ops]) or
-      concat_and_solvable_p2?(target, current, nums, ops)
-  end
-
-  def concat_and_solvable_p2?(
-        target,
-        current,
-        [top | rest] = nums,
-        [{last_op, last_num} | rest_ops] = ops
-      ) do
-    joined = String.to_integer("#{last_num}#{top}")
-
-    IO.inspect({target, current, nums, ops, joined})
-
-    previous =
-      case last_op do
-        :* -> Kernel.div(current, last_num)
-        :+ -> current - last_num
-      end
-
-    case last_op do
-      :* ->
-        solvable_p2?(target, previous * joined, rest, [{:*, joined} | rest_ops])
-
-      :+ ->
-        solvable_p2?(target, previous + joined, rest, [{:+, joined} | rest_ops])
-    end
-  end
+  def concat(a, b), do: String.to_integer("#{a}#{b}")
 
   defp read_input(filename) do
     filename
