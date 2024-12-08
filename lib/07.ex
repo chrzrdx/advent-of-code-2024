@@ -17,6 +17,7 @@ defmodule AdventOfCode.Day07 do
 
   def solvable?(target, current, []), do: target == current
   def solvable?(target, current, _nums) when current > target, do: false
+
   def solvable?(target, current, [top | rest]) do
     solvable?(target, current * top, rest) or
       solvable?(target, current + top, rest)
