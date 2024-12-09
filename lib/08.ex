@@ -6,10 +6,11 @@ defmodule AdventOfCode.Day08 do
     |> Enum.flat_map(fn {_, positions} ->
       positions
       |> make_pairs()
-      |> Enum.flat_map(fn {a, b} -> place_antinodes(a, b) end)
+      |> Enum.flat_map(fn {a, b} -> pair_antinodes(a, b) end)
     end)
     |> MapSet.new()
-    |> Enum.count(fn {x, y} -> x >= 0 and x < rows and y >= 0 and y < cols end)
+    |> Enum.filter(&is_within_bounds?(&1, rows, cols))
+    |> Enum.count()
   end
 
   def solve_p2(filename) do
@@ -22,8 +23,8 @@ defmodule AdventOfCode.Day08 do
       |> Enum.flat_map(fn {{a, b}, {c, d}} ->
         {dx, dy} = {a - c, b - d}
 
-        place_antinodes_along_line({a, b}, {dx, dy}, rows, cols) ++
-          place_antinodes_along_line({c, d}, {-dx, -dy}, rows, cols)
+        linear_antinodes({a, b}, {dx, dy}, rows, cols) ++
+          linear_antinodes({c, d}, {-dx, -dy}, rows, cols)
       end)
     end)
     |> MapSet.new()
@@ -36,18 +37,22 @@ defmodule AdventOfCode.Day08 do
     end
   end
 
-  def place_antinodes({a, b}, {c, d}) do
+  def pair_antinodes({a, b}, {c, d}) do
     {dx, dy} = {a - c, b - d}
     [{a + dx, b + dy}, {c - dx, d - dy}]
   end
 
-  def place_antinodes_along_line({a, b}, _, rows, cols)
-      when a < 0 or a >= cols or b < 0 or b >= rows,
+  def is_within_bounds?({x, y}, rows, cols) do
+    x >= 0 and x < rows and y >= 0 and y < cols
+  end
+
+  def linear_antinodes({a, b}, _, rows, cols)
+      when a < 0 or a >= rows or b < 0 or b >= cols,
       do: []
 
-  def place_antinodes_along_line({a, b}, {dx, dy}, rows, cols) do
-    new_antinode = {a + dx, b + dy}
-    [{a, b} | place_antinodes_along_line(new_antinode, {dx, dy}, rows, cols)]
+  def linear_antinodes({a, b} = pos, {dx, dy} = diff, rows, cols) do
+    new_pos = {a + dx, b + dy}
+    [pos] ++ linear_antinodes(new_pos, diff, rows, cols)
   end
 
   defp read_input(filename) do
