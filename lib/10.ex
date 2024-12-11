@@ -1,32 +1,22 @@
 defmodule AdventOfCode.Day10 do
   def solve_p1(filename) do
-    terrain = read_input(filename)
-
     heights =
-      terrain
+      read_input(filename)
       |> Enum.group_by(fn {_, v} -> v end, fn {k, _} -> k end)
 
-    trailheads =
-      MapSet.new()
-      |> trailhead(0, heights)
-      |> trailhead(1, heights)
-      |> trailhead(2, heights)
-      |> trailhead(3, heights)
-      |> trailhead(4, heights)
-      |> trailhead(5, heights)
-      |> trailhead(6, heights)
-      |> trailhead(7, heights)
-      |> trailhead(8, heights)
-      |> trailhead(9, heights)
-
-    trailheads
+    MapSet.new()
+    |> trailhead(0, heights)
+    |> trailhead(1, heights)
+    |> trailhead(2, heights)
+    |> trailhead(3, heights)
+    |> trailhead(4, heights)
+    |> trailhead(5, heights)
+    |> trailhead(6, heights)
+    |> trailhead(7, heights)
+    |> trailhead(8, heights)
+    |> trailhead(9, heights)
     |> Enum.map(fn {_, trails} -> MapSet.size(trails) end)
     |> Enum.sum()
-
-    # trailheads
-    # |> Enum.filter(fn {_, height} -> height== 9 end)
-    # |> Enum.map(fn {_, height} -> height end)
-    # |> Enum.sum()
   end
 
   def solve_p2(filename) do
