@@ -20,12 +20,29 @@ defmodule AdventOfCode.Day10 do
   end
 
   def solve_p2(filename) do
-    read_input(filename)
-    1
+    heights =
+      read_input(filename)
+      |> Enum.group_by(fn {_, v} -> v end, fn {k, _} -> k end)
+
+    Map.new()
+    |> rating(0, heights)
+    |> rating(1, heights)
+    |> rating(2, heights)
+    |> rating(3, heights)
+    |> rating(4, heights)
+    |> rating(5, heights)
+    |> rating(6, heights)
+    |> rating(7, heights)
+    |> rating(8, heights)
+    |> rating(9, heights)
+    |> Map.values()
+    |> Enum.sum()
   end
 
   def trailhead(_trails, 0, heights) do
-    heights[0] |> Enum.map(fn pos -> {pos, MapSet.new([pos])} end) |> Enum.into(%{})
+    heights[0]
+    |> Enum.map(fn pos -> {pos, MapSet.new([pos])} end)
+    |> Enum.into(%{})
   end
 
   def trailhead(trails, n, heights) do
@@ -47,10 +64,23 @@ defmodule AdventOfCode.Day10 do
     |> Enum.into(%{})
   end
 
-  def trailhead(map, n) do
-    map
-    |> Enum.filter(fn {_, height} -> height == n end)
-    |> Enum.map(fn {pos, _} -> pos end)
+  def rating(_map, 0, heights) do
+    heights[0]
+    |> Enum.map(fn {x, y} -> {{x, y}, 1} end)
+    |> Enum.into(%{})
+  end
+
+  def rating(map, n, heights) do
+    heights[n]
+    |> Enum.map(fn {x, y} ->
+      up = Map.get(map, {x, y - 1}, 0)
+      down = Map.get(map, {x, y + 1}, 0)
+      left = Map.get(map, {x - 1, y}, 0)
+      right = Map.get(map, {x + 1, y}, 0)
+
+      {{x, y}, up + down + left + right}
+    end)
+    |> Enum.into(%{})
   end
 
   defp read_input(filename) do
