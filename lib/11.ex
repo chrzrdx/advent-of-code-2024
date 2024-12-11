@@ -5,15 +5,29 @@ defmodule AdventOfCode.Day11 do
     Enum.reduce(1..25, nums, fn _, acc ->
       blink_nums(acc)
     end)
-    |> Enum.count()
+    |> Map.values()
+    |> Enum.sum()
   end
 
   def solve_p2(filename) do
-    read_input(filename)
-    1
+    nums = read_input(filename)
+
+    Enum.reduce(1..75, nums, fn _, acc ->
+      blink_nums(acc)
+    end)
+    |> Map.values()
+    |> Enum.sum()
   end
 
-  def blink_nums(nums), do: Enum.flat_map(nums, &blink/1)
+  def blink_nums(nums) do
+    Enum.flat_map(nums, fn {num, count} ->
+      blink(num)
+      |> Enum.map(fn n -> {n, count} end)
+    end)
+    |> Enum.group_by(fn {k, _} -> k end, fn {_, v} -> v end)
+    |> Enum.map(fn {k, v} -> {k, Enum.sum(v)} end)
+    |> Enum.into(%{})
+  end
 
   def blink(n) when n == 0, do: [1]
 
@@ -38,5 +52,6 @@ defmodule AdventOfCode.Day11 do
     |> String.trim()
     |> String.split(" ", trim: true)
     |> Enum.map(&String.to_integer/1)
+    |> Enum.frequencies()
   end
 end

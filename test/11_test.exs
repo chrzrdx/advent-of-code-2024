@@ -10,13 +10,7 @@ defmodule AdventOfCode.Day11Test do
     assert Day11.solve_p1("test/11_tc_puzzle.input") == 197_357
   end
 
-  @tag :skip
-  test "p2: basic" do
-    assert Day11.solve_p2("test/11_tc_02.input") == 1
-  end
-
-  @tag :skip
   test "p2: puzzle" do
-    assert Day11.solve_p2("test/11_tc_puzzle.input") == 1
+    assert Day11.solve_p2("test/11_tc_puzzle.input") == 234_568_186_890_978
   end
 end
