@@ -1,8 +1,6 @@
 defmodule AdventOfCode.Day10 do
   def solve_p1(filename) do
-    heights =
-      read_input(filename)
-      |> Enum.group_by(fn {_, v} -> v end, fn {k, _} -> k end)
+    heights = read_input(filename)
 
     MapSet.new()
     |> trailhead(0, heights)
@@ -20,9 +18,7 @@ defmodule AdventOfCode.Day10 do
   end
 
   def solve_p2(filename) do
-    heights =
-      read_input(filename)
-      |> Enum.group_by(fn {_, v} -> v end, fn {k, _} -> k end)
+    heights = read_input(filename)
 
     Map.new()
     |> rating(0, heights)
@@ -39,46 +35,44 @@ defmodule AdventOfCode.Day10 do
     |> Enum.sum()
   end
 
+  def adjacent({x, y}) do
+    [{x, y - 1}, {x, y + 1}, {x - 1, y}, {x + 1, y}]
+  end
+
   def trailhead(_trails, 0, heights) do
     heights[0]
-    |> Enum.map(fn pos -> {pos, MapSet.new([pos])} end)
-    |> Enum.into(%{})
+    |> Map.new(fn pos -> {pos, MapSet.new([pos])} end)
   end
 
   def trailhead(trails, n, heights) do
     heights[n]
-    |> Enum.map(fn {x, y} ->
-      up = Map.get(trails, {x, y - 1}, MapSet.new())
-      down = Map.get(trails, {x, y + 1}, MapSet.new())
-      left = Map.get(trails, {x - 1, y}, MapSet.new())
-      right = Map.get(trails, {x + 1, y}, MapSet.new())
-
+    |> Enum.map(fn pos ->
       trails_at_pos =
-        up
-        |> MapSet.union(down)
-        |> MapSet.union(left)
-        |> MapSet.union(right)
+        adjacent(pos)
+        |> Enum.reduce(MapSet.new(), fn pos, acc ->
+          adjacent_trails = Map.get(trails, pos, MapSet.new())
+          MapSet.union(acc, adjacent_trails)
+        end)
 
-      {{x, y}, trails_at_pos}
+      {pos, trails_at_pos}
     end)
     |> Enum.into(%{})
   end
 
   def rating(_map, 0, heights) do
     heights[0]
-    |> Enum.map(fn {x, y} -> {{x, y}, 1} end)
-    |> Enum.into(%{})
+    |> Map.new(fn pos -> {pos, 1} end)
   end
 
   def rating(map, n, heights) do
     heights[n]
-    |> Enum.map(fn {x, y} ->
-      up = Map.get(map, {x, y - 1}, 0)
-      down = Map.get(map, {x, y + 1}, 0)
-      left = Map.get(map, {x - 1, y}, 0)
-      right = Map.get(map, {x + 1, y}, 0)
+    |> Enum.map(fn pos ->
+      rating_sum =
+        adjacent(pos)
+        |> Enum.map(fn adj_pos -> Map.get(map, adj_pos, 0) end)
+        |> Enum.sum()
 
-      {{x, y}, up + down + left + right}
+      {pos, rating_sum}
     end)
     |> Enum.into(%{})
   end
@@ -95,6 +89,6 @@ defmodule AdventOfCode.Day10 do
       |> Enum.filter(fn {char, _} -> char != "." end)
       |> Enum.map(fn {digit, y} -> {{x, y}, String.to_integer(digit)} end)
     end)
-    |> Enum.into(%{})
+    |> Enum.group_by(fn {_, v} -> v end, fn {k, _} -> k end)
   end
 end
