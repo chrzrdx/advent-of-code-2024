@@ -20,14 +20,72 @@ defmodule AdventOfCode.Day15 do
   def solve_p2(filename) do
     {original_world, moves} = read_input(filename)
 
-    original_world
-    |> resize_world()
-    |> display()
+    world =
+      original_world
+      |> resize_world()
+      |> display()
 
-    1
+    moves
+    |> Enum.reduce(world, fn move, acc ->
+      move2(
+        acc,
+        case move do
+          "<" -> {0, -1}
+          ">" -> {0, 1}
+          "^" -> {-1, 0}
+          "v" -> {1, 0}
+        end
+      )
+    end)
+    |> then(&score2/1)
   end
 
   def move(world, {dx, dy}) do
+    {x, y} = pos = world.robot
+    next_pos = {x + dx, y + dy}
+
+    case world.warehouse[next_pos] do
+      "." ->
+        update_positions(world, pos, next_pos)
+
+      "O" ->
+        case next_empty?(world, pos, {dx, dy}) do
+          nil -> world
+          empty_pos -> update_positions(world, pos, next_pos, empty_pos)
+        end
+
+      _ ->
+        world
+    end
+  end
+
+  # Helper functions
+  defp update_positions(world, from, to) do
+    %{world | robot: to, warehouse: %{world.warehouse | from => ".", to => "@"}}
+  end
+
+  defp update_positions(world, from, to, box_pos) do
+    %{world | robot: to, warehouse: %{world.warehouse | from => ".", to => "@", box_pos => "O"}}
+  end
+
+  def next_empty?(world, {x, y}, {dx, dy}) do
+    next_pos = {x + dx, y + dy}
+
+    case Map.get(world.warehouse, next_pos) do
+      "." -> next_pos
+      "O" -> next_empty?(world, next_pos, {dx, dy})
+      _ -> nil
+    end
+  end
+
+  def score(world) do
+    world.warehouse
+    |> Enum.filter(fn {_, v} -> v == "O" end)
+    |> Enum.map(fn {{x, y}, _} -> x * 100 + y end)
+    |> Enum.sum()
+  end
+
+  def move2(world, {dx, dy}) do
     {x, y} = pos = world.robot
     next_pos = {x + dx, y + dy}
 
@@ -46,39 +104,18 @@ defmodule AdventOfCode.Day15 do
               )
         }
 
-      "O" ->
-        case next_empty?(world, {x, y}, {dx, dy}) do
-          nil ->
-            world
+      "[" ->
+        world
 
-          empty_pos ->
-            %{
-              world
-              | robot: next_pos,
-                warehouse:
-                  Map.merge(
-                    world.warehouse,
-                    %{pos => ".", next_pos => "@", empty_pos => "O"}
-                  )
-            }
-        end
+      "]" ->
+        world
 
       _ ->
         world
     end
   end
 
-  def next_empty?(world, {x, y}, {dx, dy}) do
-    next_pos = {x + dx, y + dy}
-
-    case Map.get(world.warehouse, next_pos) do
-      "." -> next_pos
-      "O" -> next_empty?(world, next_pos, {dx, dy})
-      _ -> nil
-    end
-  end
-
-  def score(world) do
+  def score2(world) do
     world.warehouse
     |> Enum.filter(fn {_, v} -> v == "O" end)
     |> Enum.map(fn {{x, y}, _} -> x * 100 + y end)

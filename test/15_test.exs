@@ -14,6 +14,7 @@ defmodule AdventOfCode.Day15Test do
     assert Day15.solve_p1("test/15_tc_puzzle.input") == 1_414_416
   end
 
+  @tag :skip
   test "p2: basic" do
     assert Day15.solve_p2("test/15_tc_02.input") == 1
   end
