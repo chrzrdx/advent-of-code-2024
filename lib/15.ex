@@ -143,7 +143,7 @@ defmodule AdventOfCode.Day15 do
 
     %{
       warehouse: resized_warehouse,
-      rows: world.rows * 2,
+      rows: world.rows,
       cols: world.cols * 2,
       robot: find_robot(resized_warehouse)
     }
