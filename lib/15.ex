@@ -126,8 +126,11 @@ defmodule AdventOfCode.Day15.Part2 do
         ">" ->
           move_horizontal(acc, {0, 1})
 
-        # "^" -> move(acc, {-1, 0})
-        # "v" -> move(acc, {1, 0})
+        "^" ->
+          move_vertical(acc, {-1, 0})
+
+        "v" ->
+          move_vertical(acc, {1, 0})
 
         _ ->
           world
@@ -135,6 +138,37 @@ defmodule AdventOfCode.Day15.Part2 do
       |> display()
     end)
     |> then(&score/1)
+  end
+
+  def move_vertical(world, {dx, dy}) do
+    {x, y} = pos = world.robot
+    next_pos = {x + dx, y + dy}
+
+    case Map.get(world.warehouse, next_pos) do
+      nil ->
+        world
+
+      "#" ->
+        world
+
+      "." ->
+        %{
+          world
+          | robot: move_robot(world.robot, {dx, dy}),
+            warehouse: %{world.warehouse | pos => ".", next_pos => "@"}
+        }
+
+      _ ->
+        do_move_vertical(world, next_pos, {dx, dy}, %{pos => ".", next_pos => "@"})
+    end
+  end
+
+  def do_move_vertical(world, next_pos, {dx, dy}, updates) do
+    %{
+      world
+      | robot: move_robot(world.robot, {dx, dy}),
+        warehouse: Map.merge(world.warehouse, updates)
+    }
   end
 
   def move_horizontal(world, {dx, dy}) do
@@ -148,7 +182,7 @@ defmodule AdventOfCode.Day15.Part2 do
     end
   end
 
-  def do_move_horizontal(world, {x, y} = pos, {dx, dy}, updates) do
+  def do_move_horizontal(world, {x, y}, {dx, dy}, updates) do
     next_pos = {x + dx, y + dy}
 
     case Map.get(world.warehouse, {x, y}) do
