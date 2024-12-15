@@ -7,8 +7,14 @@ defmodule AdventOfCode.Day14 do
   end
 
   def solve_p2(filename) do
-    read_input(filename)
-    1
+    [robots, bathroom] = read_input(filename)
+
+    for i <- 1072..20000//101 do
+      updated = after_n_seconds(robots, i, bathroom)
+
+      IO.write("\n#{i}\n")
+      display_bathroom(updated, bathroom, "tests/output_#{i}.ppm")
+    end
   end
 
   def after_n_seconds(robots, n, bathroom) do
@@ -50,6 +56,35 @@ defmodule AdventOfCode.Day14 do
     q4 = %{x: (midrow + 1)..(rows - 1), y: (midcol + 1)..(cols - 1)}
 
     %{q1: q1, q2: q2, q3: q3, q4: q4, rows: rows, cols: cols}
+  end
+
+  def display_bathroom(robots, bathroom, filename \\ "output.ppm") do
+    freq = Enum.frequencies(robots |> Enum.map(fn [px, py, _, _] -> {px, py} end))
+
+    # PPM header
+    contents = ["P3\n", "#{bathroom.cols} #{bathroom.rows}\n", "255\n"]
+
+    # Generate pixel data
+    pixels =
+      for i <- 0..(bathroom.rows - 1) do
+        for j <- 0..(bathroom.cols - 1) do
+          if Map.get(freq, {i, j}) do
+            # Black pixel
+            "0 0 0 "
+          else
+            # White pixel
+            "255 255 255 "
+          end
+        end
+        |> Enum.join()
+        |> Kernel.<>("\n")
+      end
+
+    # Write to file
+    File.write!(
+      filename,
+      contents ++ pixels
+    )
   end
 
   defp read_input(filename) do

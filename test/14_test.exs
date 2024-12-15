@@ -15,7 +15,6 @@ defmodule AdventOfCode.Day14Test do
     assert Day14.solve_p2("test/14_tc_02.input") == 1
   end
 
-  @tag :skip
   test "p2: puzzle" do
     assert Day14.solve_p2("test/14_tc_puzzle.input") == 1
   end
