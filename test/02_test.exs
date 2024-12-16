@@ -3,18 +3,18 @@ defmodule AdventOfCode.Day2Test do
   alias AdventOfCode.Day2
 
   test "p1: basic" do
-    assert Day2.solve_p1("test/02_tc_01.input") == 2
+    assert Day2.solve_p1("test/fixtures/02/01.txt") == 2
   end
 
   test "p1: puzzle" do
-    assert Day2.solve_p1("test/02_tc_puzzle.input") == 252
+    assert Day2.solve_p1("test/fixtures/02/puzzle.txt") == 252
   end
 
   test "p2: basic" do
-    assert Day2.solve_p2("test/02_tc_01.input") == 4
+    assert Day2.solve_p2("test/fixtures/02/01.txt") == 4
   end
 
   test "p2: puzzle" do
-    assert Day2.solve_p2("test/02_tc_puzzle.input") == 324
+    assert Day2.solve_p2("test/fixtures/02/puzzle.txt") == 324
   end
 end

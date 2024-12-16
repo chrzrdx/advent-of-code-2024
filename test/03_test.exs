@@ -3,18 +3,18 @@ defmodule AdventOfCode.Day3Test do
   alias AdventOfCode.Day3
 
   test "p1: basic" do
-    assert Day3.solve_p1("test/03_tc_01.input") == 161
+    assert Day3.solve_p1("test/fixtures/03/01.txt") == 161
   end
 
   test "p1: puzzle" do
-    assert Day3.solve_p1("test/03_tc_puzzle.input") == 178_794_710
+    assert Day3.solve_p1("test/fixtures/03/puzzle.txt") == 178_794_710
   end
 
   test "p2: basic" do
-    assert Day3.solve_p2("test/03_tc_02.input") == 48
+    assert Day3.solve_p2("test/fixtures/03/02.txt") == 48
   end
 
   test "p2: puzzle" do
-    assert Day3.solve_p2("test/03_tc_puzzle.input") == 76_729_637
+    assert Day3.solve_p2("test/fixtures/03/puzzle.txt") == 76_729_637
   end
 end
