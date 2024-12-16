@@ -1,4 +1,4 @@
-defmodule AdventOfCode.Day2 do
+defmodule AdventOfCode.Day02 do
   def solve_p1(filename) do
     reports = read_input(filename)
 

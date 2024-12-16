@@ -1,4 +1,4 @@
-defmodule AdventOfCode.Day3 do
+defmodule AdventOfCode.Day03 do
   def solve_p1(filename) do
     read_input(filename)
     |> parse()
