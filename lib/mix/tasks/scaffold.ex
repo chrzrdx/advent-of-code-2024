@@ -40,22 +40,22 @@ defmodule Mix.Tasks.Scaffold do
       alias AdventOfCode.Day#{day}
 
       test "p1: basic" do
-        assert Day#{day}.solve_p1("test/#{day}_tc_01.input") == 1
+        assert Day#{day}.solve_p1("test/fixtures/#{day}/01.txt") == 1
       end
 
       @tag :skip
       test "p1: puzzle" do
-        assert Day#{day}.solve_p1("test/#{day}_tc_puzzle.input") == 1
+        assert Day#{day}.solve_p1("test/fixtures/#{day}/puzzle.txt") == 1
       end
 
       @tag :skip
       test "p2: basic" do
-        assert Day#{day}.solve_p2("test/#{day}_tc_02.input") == 1
+        assert Day#{day}.solve_p2("test/fixtures/#{day}/02.txt") == 1
       end
 
       @tag :skip
       test "p2: puzzle" do
-        assert Day#{day}.solve_p2("test/#{day}_tc_puzzle.input") == 1
+        assert Day#{day}.solve_p2("test/fixtures/#{day}/puzzle.txt") == 1
       end
     end
     """
@@ -64,8 +64,9 @@ defmodule Mix.Tasks.Scaffold do
   end
 
   defp create_input_files(day) do
-    File.write!("test/#{day}_tc_01.input", "")
-    File.write!("test/#{day}_tc_02.input", "")
-    File.write!("test/#{day}_tc_puzzle.input", "")
+    File.mkdir_p!("test/fixtures/#{day}")
+    File.write!("test/fixtures/#{day}/01.txt", "")
+    File.write!("test/fixtures/#{day}/02.txt", "")
+    File.write!("test/fixtures/#{day}/puzzle.txt", "")
   end
 end
