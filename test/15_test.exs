@@ -15,11 +15,10 @@ defmodule AdventOfCode.Day15Test do
   end
 
   test "p2: basic" do
-    assert Day15.Part2.solve_p2("test/15_tc_02.input") == 1
+    assert Day15.Part2.solve_p2("test/15_tc_02.input") == 9021
   end
 
-  @tag :skip
   test "p2: puzzle" do
-    assert Day15.Part2.solve_p2("test/15_tc_puzzle.input") == 1
+    assert Day15.Part2.solve_p2("test/15_tc_puzzle.input") == 1_386_070
   end
 end

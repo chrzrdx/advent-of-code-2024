@@ -115,9 +115,9 @@ defmodule AdventOfCode.Day15.Part2 do
   alias AdventOfCode.Day15.Part1
 
   def solve_p2(filename) do
-    {world, _moves} = read_input(filename)
+    {world, moves} = read_input(filename)
 
-    [".", ">", "<", "<", "<", "<", "<", "<"]
+    moves
     |> Enum.reduce(world, fn move, acc ->
       case move do
         "<" ->
@@ -135,7 +135,6 @@ defmodule AdventOfCode.Day15.Part2 do
         _ ->
           world
       end
-      |> display()
     end)
     |> then(&score/1)
   end
@@ -159,16 +158,87 @@ defmodule AdventOfCode.Day15.Part2 do
         }
 
       _ ->
-        do_move_vertical(world, next_pos, {dx, dy}, %{pos => ".", next_pos => "@"})
+        block =
+          get_block(world, next_pos)
+
+        blocks_to_move =
+          do_move_vertical(world, MapSet.new([block]), {dx, dy}, MapSet.new())
+
+        if MapSet.size(blocks_to_move) == 0 do
+          world
+        else
+          clear_updates =
+            blocks_to_move
+            |> Enum.flat_map(fn {x, y} -> [{{x, y}, "."}, {{x, y + 1}, "."}] end)
+            |> Enum.into(%{})
+
+          move_updates =
+            blocks_to_move
+            |> Enum.flat_map(fn {x, y} ->
+              [{{x + dx, y + dy}, "["}, {{x + dx, y + dy + 1}, "]"}]
+            end)
+            |> Enum.into(%{})
+
+          %{
+            world
+            | robot: move_robot(world.robot, {dx, dy}),
+              warehouse:
+                world.warehouse
+                |> Map.merge(clear_updates)
+                |> Map.merge(move_updates)
+                |> Map.merge(%{pos => ".", next_pos => "@"})
+          }
+        end
     end
   end
 
-  def do_move_vertical(world, next_pos, {dx, dy}, updates) do
-    %{
-      world
-      | robot: move_robot(world.robot, {dx, dy}),
-        warehouse: Map.merge(world.warehouse, updates)
-    }
+  def do_move_vertical(world, blocks_to_push, dir, blocks_to_move) do
+    if MapSet.size(blocks_to_push) == 0 do
+      blocks_to_move
+    else
+      block = Enum.at(blocks_to_push, 0)
+      remaining_blocks = MapSet.delete(blocks_to_push, block)
+
+      case push_block(world, block, dir) do
+        {:blocked, _} ->
+          MapSet.new()
+
+        {:ok, new_blocks_to_push} ->
+          do_move_vertical(
+            world,
+            MapSet.union(remaining_blocks, MapSet.new(new_blocks_to_push)),
+            dir,
+            MapSet.put(blocks_to_move, block)
+          )
+      end
+    end
+  end
+
+  def get_block(world, {x, y}) do
+    case Map.get(world.warehouse, {x, y}) do
+      "[" -> {x, y}
+      "]" -> {x, y - 1}
+      _ -> nil
+    end
+  end
+
+  def push_block(world, {x, y}, {dx, dy}) do
+    next_left = {x + dx, y + dy}
+    next_right = {x + dx, y + 1 + dy}
+
+    case {Map.get(world.warehouse, next_left), Map.get(world.warehouse, next_right)} do
+      {_, "#"} ->
+        {:blocked, []}
+
+      {"#", _} ->
+        {:blocked, []}
+
+      _ ->
+        {
+          :ok,
+          [get_block(world, next_left), get_block(world, next_right)] |> Enum.filter(& &1)
+        }
+    end
   end
 
   def move_horizontal(world, {dx, dy}) do
@@ -212,7 +282,7 @@ defmodule AdventOfCode.Day15.Part2 do
 
   def score(world) do
     world.warehouse
-    |> Enum.filter(fn {_, v} -> v == "O" end)
+    |> Enum.filter(fn {_, v} -> v == "[" end)
     |> Enum.map(fn {{x, y}, _} -> x * 100 + y end)
     |> Enum.sum()
   end
@@ -243,17 +313,17 @@ defmodule AdventOfCode.Day15.Part2 do
     }
   end
 
-  defp display(world) do
-    IO.write("\n")
+  # defp display(world) do
+  #   IO.write("\n")
 
-    for x <- 0..(world.rows - 1) do
-      for y <- 0..(world.cols - 1) do
-        IO.write(Map.get(world.warehouse, {x, y}, "."))
-      end
+  #   for x <- 0..(world.rows - 1) do
+  #     for y <- 0..(world.cols - 1) do
+  #       IO.write(Map.get(world.warehouse, {x, y}, "."))
+  #     end
 
-      IO.write("\n")
-    end
+  #     IO.write("\n")
+  #   end
 
-    world
-  end
+  #   world
+  # end
 end
