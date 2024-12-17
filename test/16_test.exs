@@ -6,7 +6,6 @@ defmodule AdventOfCode.Day16Test do
     assert Day16.solve_p1("test/fixtures/16/01.txt") == 7036
   end
 
-  @tag :skip
   test "p1: basic 2" do
     assert Day16.solve_p1("test/fixtures/16/02.txt") == 11048
   end
