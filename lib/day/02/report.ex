@@ -1,11 +1,10 @@
 defmodule AdventOfCode.Day02.Report do
-  def safe?(x), do: increasing?(x) or increasing?(Enum.reverse(x))
+  def safe?(report), do: increasing?(report) or increasing?(Enum.reverse(report))
 
-  def safe_with_skip?(x) do
-    Enum.with_index(x)
-    |> Enum.any?(fn {_, idx} ->
-      x |> List.delete_at(idx) |> safe?()
-    end)
+  def safe_with_skip?(report) do
+    report
+    |> Stream.with_index(fn _, idx -> List.delete_at(report, idx) end)
+    |> Enum.any?(&safe?/1)
   end
 
   defp increasing?([_]), do: true
