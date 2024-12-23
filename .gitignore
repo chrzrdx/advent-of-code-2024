@@ -26,3 +26,4 @@ advent_of_code_2024-*.tar
 /tmp/
 
 .lexical
+.elixir_ls
