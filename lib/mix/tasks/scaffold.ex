@@ -30,6 +30,7 @@ defmodule Mix.Tasks.Scaffold do
 
   defp create_directory(day) do
     path = "lib/day/#{day}"
+
     if File.exists?(path) do
       Mix.shell().info([:yellow, "Directory #{path} already exists, skipping..."])
       :ok
