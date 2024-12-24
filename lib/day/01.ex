@@ -1,15 +1,15 @@
 defmodule AdventOfCode.Day01 do
-  alias AdventOfCode.Day01.{Parser, Locations}
+  alias AdventOfCode.Day01.Locations
 
   def solve_p1(filename) do
-    {left, right} = Parser.parse(filename)
-
-    Locations.distance(left, right)
+    filename
+    |> Locations.from_file()
+    |> Locations.distance()
   end
 
   def solve_p2(filename) do
-    {left, right} = Parser.parse(filename)
-
-    Locations.similarity(left, right)
+    filename
+    |> Locations.from_file()
+    |> Locations.similarity()
   end
 end

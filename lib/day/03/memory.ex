@@ -1,4 +1,10 @@
 defmodule AdventOfCode.Day03.Memory do
+  def from_file(filename) do
+    filename
+    |> File.read!()
+    |> String.replace("\n", "-")
+  end
+
   def sum_multiplications(memory) do
     ~r/mul\(([0-9]{1,3}),([0-9]{1,3})\)/
     |> Regex.scan(memory)
