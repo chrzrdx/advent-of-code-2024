@@ -7,13 +7,18 @@ defmodule Mix.Tasks.Scaffold do
     run([day, "util"])
   end
 
-  def run([day, solution_module]) do
+  def run([day, module_name]) do
     validate_day!(day)
-    module = String.capitalize(solution_module)
+
+    module = %{
+      pascal_case:
+        module_name |> String.split("_") |> Enum.map(&String.capitalize/1) |> Enum.join(""),
+      snake_case:
+        module_name |> String.split("_") |> Enum.map(&String.downcase/1) |> Enum.join("_")
+    }
 
     with :ok <- create_directory(day),
-         :ok <- create_parser_file(day),
-         :ok <- create_util_file(day, module),
+         :ok <- create_module_file(day, module),
          :ok <- create_main_file(day, module),
          :ok <- create_test_file(day),
          :ok <- create_input_files(day) do
@@ -51,51 +56,47 @@ defmodule Mix.Tasks.Scaffold do
     end
   end
 
-  defp create_parser_file(day) do
+  defp create_module_file(day, module) do
     content = """
-    defmodule AdventOfCode.Day#{day}.Parser do
-      def parse(filename) do
-        filename
+    defmodule AdventOfCode.Day#{day}.#{module.pascal_case} do
+      defstruct [:data]
+
+      def from_file(filename) do
+        data = filename
         |> File.read!()
         |> String.split("\\n", trim: true)
         |> Enum.map(fn line ->
           line
           |> String.split(" ", trim: true)
         end)
+
+        %__MODULE__{data: data}
+      end
+
+      def solve(%__MODULE__{}) do
+        1
       end
     end
     """
 
-    create_file("lib/day/#{day}/parser.ex", content)
-  end
-
-  defp create_util_file(day, module) do
-    content = """
-    defmodule AdventOfCode.Day#{day}.#{module} do
-      def process(input) do
-        input
-      end
-    end
-    """
-
-    create_file("lib/day/#{day}/#{String.downcase(module)}.ex", content)
+    create_file("lib/day/#{day}/#{module.snake_case}.ex", content)
   end
 
   defp create_main_file(day, module) do
     content = """
     defmodule AdventOfCode.Day#{day} do
-      alias AdventOfCode.Day#{day}.{Parser, #{module}}
+      alias AdventOfCode.Day#{day}.#{module.pascal_case}
 
       def solve_p1(filename) do
-        Parser.parse(filename)
-
-        1
+        filename
+        |> #{module.pascal_case}.from_file()
+        |> #{module.pascal_case}.solve()
       end
 
       def solve_p2(filename) do
-        Parser.parse(filename)
-
-        1
+        filename
+        |> #{module.pascal_case}.from_file()
+        |> #{module.pascal_case}.solve()
       end
     end
     """
