@@ -7,8 +7,9 @@ defmodule AdventOfCode.Day04.WordSearch do
     |> Grid.from_string()
   end
 
-  def count_xmas(%Grid{grid: grid, locations: locations}) do
-    # word = "XMAS"
+  # word = "XMAS"
+  def count_xmas(grid) do
+    locations = Grid.locations(grid)
 
     Enum.sum_by(locations["X"], fn pos ->
       Enum.count([:n, :s, :e, :w, :ne, :se, :nw, :sw], fn dir ->
@@ -19,13 +20,14 @@ defmodule AdventOfCode.Day04.WordSearch do
     end)
   end
 
-  def count_cross_mas(%Grid{grid: grid, locations: locations}) do
-    # cross_pairs = [
-    #   {"MAS", "MAS"},
-    #   {"MAS", "SAM"},
-    #   {"SAM", "MAS"},
-    #   {"SAM", "SAM"}
-    # ]
+  # cross_pairs = [
+  #   {"MAS", "MAS"},
+  #   {"MAS", "SAM"},
+  #   {"SAM", "MAS"},
+  #   {"SAM", "SAM"}
+  # ]
+  def count_cross_mas(grid) do
+    locations = Grid.locations(grid)
 
     Enum.count(locations["A"], fn pos ->
       nw = Grid.in_direction(grid, pos, :nw)
