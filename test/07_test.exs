@@ -2,12 +2,10 @@ defmodule AdventOfCode.Day07Test do
   use ExUnit.Case
   alias AdventOfCode.Day07
 
-  @tag :skip
   test "p1: basic" do
     assert Day07.solve_p1("test/fixtures/07/01.txt") == 3749
   end
 
-  @tag :skip
   test "p1: puzzle" do
     assert Day07.solve_p1("test/fixtures/07/puzzle.txt") == 7_710_205_485_870
   end
