@@ -10,6 +10,8 @@ defmodule AdventOfCode.Utils.Grid do
     sw: {1, -1}
   }
 
+  @cardinal_directions [:n, :s, :e, :w]
+
   def from_string(string) do
     string
     |> String.split("\n", trim: true)
@@ -41,8 +43,12 @@ defmodule AdventOfCode.Utils.Grid do
     at(grid, {x + dx * steps, y + dy * steps})
   end
 
-  def neighbors(pos, directions \\ Map.keys(@directions)) do
-    Enum.map(directions, &move(pos, &1))
+  def neighbours(pos, type \\ :all)
+  def neighbours(pos, :all), do: neighbours(pos, Map.keys(@directions))
+  def neighbours(pos, :cardinal), do: neighbours(pos, @cardinal_directions)
+
+  def neighbours(pos, directions) when is_list(directions) do
+    Enum.map(directions, fn dir -> {dir, move(pos, dir)} end)
   end
 
   def locations(grid) do
